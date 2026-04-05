@@ -28,6 +28,8 @@ export interface Slot {
 
 export interface RoundData {
   name: string;
+  date: string;
+  location: string;
   games: GameData[];
 }
 
@@ -62,7 +64,9 @@ export async function getLatestRoundTab(): Promise<string | null> {
 
 /**
  * Read all rows from a specific round tab and return structured data.
- * Sheet columns: Game | Time | Role | Volunteer (A-D)
+ * Row 1: Date (A1) | Location (B1)
+ * Row 2: Header — Game | Time | Role | Volunteer
+ * Row 3+: Data
  * Tab name is used as the round name.
  */
 export async function getRoundData(
@@ -75,15 +79,19 @@ export async function getRoundData(
   });
 
   const rows = res.data.values;
-  if (!rows || rows.length < 2) return null;
+  if (!rows || rows.length < 3) return null;
 
-  // Row 0 is header: Game, Time, Role, Volunteer
-  const slots: Slot[] = rows.slice(1).map((row, i) => ({
+  // Row 0 (A1/B1): date and location
+  const date = rows[0]?.[0] || "";
+  const location = rows[0]?.[1] || "";
+
+  // Row 1 is header, row 2+ is data
+  const slots: Slot[] = rows.slice(2).map((row, i) => ({
     game: row[0] || "",
     time: row[1] || "",
     role: row[2] || "",
     volunteer: row[3] || "",
-    rowIndex: i + 2, // 1-indexed, skip header
+    rowIndex: i + 3, // 1-indexed, skip info row + header
   }));
 
   if (slots.length === 0) return null;
@@ -104,7 +112,7 @@ export async function getRoundData(
     })
   );
 
-  return { name: sheetName, games };
+  return { name: sheetName, date, location, games };
 }
 
 /**

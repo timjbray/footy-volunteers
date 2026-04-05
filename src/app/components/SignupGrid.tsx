@@ -18,6 +18,8 @@ interface GameData {
 
 interface RoundData {
   name: string;
+  date: string;
+  location: string;
   games: GameData[];
 }
 
@@ -157,6 +159,11 @@ export default function SignupGrid({ initialData }: SignupGridProps) {
       {/* Round header */}
       <div className="mb-6 text-center">
         <h2 className="text-2xl font-bold text-marby-navy">{round.name}</h2>
+        {(round.date || round.location) && (
+          <p className="text-base text-gray-600 mt-1">
+            {[round.date, round.location].filter(Boolean).join(" — ")}
+          </p>
+        )}
         <p className="text-base mt-2">
           <span className="font-semibold text-green-700">{filledCount}</span>
           <span className="text-gray-500">/{totalCount} filled</span>
