@@ -79,19 +79,19 @@ export async function getRoundData(
   });
 
   const rows = res.data.values;
-  if (!rows || rows.length < 3) return null;
+  if (!rows || rows.length < 4) return null;
 
   // Row 0 (A1/B1): date and location
   const date = rows[0]?.[0] || "";
   const location = rows[0]?.[1] || "";
 
-  // Row 1 is header, row 2+ is data
-  const slots: Slot[] = rows.slice(2).map((row, i) => ({
+  // Row 1 is blank, row 2 is header, row 3+ is data
+  const slots: Slot[] = rows.slice(3).map((row, i) => ({
     game: row[0] || "",
     time: row[1] || "",
     role: row[2] || "",
     volunteer: row[3] || "",
-    rowIndex: i + 3, // 1-indexed, skip info row + header
+    rowIndex: i + 4, // 1-indexed: skip info row, blank row, header
   }));
 
   if (slots.length === 0) return null;
