@@ -1,17 +1,26 @@
+import { getSheetTabs, getLatestRoundTab, getRoundData } from "@/lib/sheets";
 import SignupGrid from "./components/SignupGrid";
 
-async function getInitialData() {
-  const baseUrl = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : "http://localhost:3000";
-
-  const res = await fetch(`${baseUrl}/api/rounds`, { cache: "no-store" });
-  if (!res.ok) return null;
-  return res.json();
-}
+export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const data = await getInitialData();
+  let data = null;
+
+  try {
+    const [tabs, latestTab] = await Promise.all([
+      getSheetTabs(),
+      getLatestRoundTab(),
+    ]);
+
+    if (latestTab) {
+      const round = await getRoundData(latestTab);
+      if (round) {
+        data = { tabs, currentTab: latestTab, round };
+      }
+    }
+  } catch (error) {
+    console.error("Failed to fetch round data:", error);
+  }
 
   return (
     <div className="min-h-full bg-gray-50">
@@ -22,7 +31,7 @@ export default async function Home() {
       </header>
 
       <main className="py-6 px-4">
-        {data?.round ? (
+        {data ? (
           <SignupGrid initialData={data} />
         ) : (
           <div className="text-center py-12 text-gray-500">
