@@ -160,7 +160,7 @@ export default function SignupGrid({ initialData }: SignupGridProps) {
       <div className="mb-6 text-center">
         <h2 className="text-2xl font-bold text-marby-navy">{round.name}</h2>
         {(round.date || round.location) && (
-          <p className="text-base text-gray-600 mt-1">
+          <p className="text-lg text-gray-600 mt-1">
             {[round.date, round.location].filter(Boolean).join(" — ")}
           </p>
         )}
