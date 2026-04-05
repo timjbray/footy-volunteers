@@ -8,7 +8,7 @@ const geist = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Match Day Volunteers",
+  title: "Marby Lions - Match Day Volunteers",
   description: "Sign up for weekly match day volunteer roles",
 };
 

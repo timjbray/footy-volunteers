@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { getSheetTabs, getLatestRoundTab, getRoundData } from "@/lib/sheets";
 import SignupGrid from "./components/SignupGrid";
 
@@ -23,11 +24,23 @@ export default async function Home() {
   }
 
   return (
-    <div className="min-h-full bg-gray-50">
-      <header className="bg-white border-b border-gray-200 py-4 px-4">
-        <h1 className="text-center text-xl font-bold text-gray-900">
-          🏉 Match Day Volunteers
-        </h1>
+    <div className="min-h-full bg-[var(--background)]">
+      <header className="bg-marby-navy py-4 px-4">
+        <div className="max-w-2xl mx-auto flex items-center gap-4">
+          <Image
+            src="/logo.png"
+            alt="Marby Lions FC"
+            width={56}
+            height={63}
+            className="shrink-0"
+          />
+          <div>
+            <h1 className="text-xl font-bold text-marby-gold tracking-wide">
+              Marby Lions
+            </h1>
+            <p className="text-sm text-blue-200">Match Day Volunteers</p>
+          </div>
+        </div>
       </header>
 
       <main className="py-6 px-4">

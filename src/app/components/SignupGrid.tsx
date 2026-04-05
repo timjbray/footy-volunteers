@@ -58,7 +58,6 @@ export default function SignupGrid({ initialData }: SignupGridProps) {
   const handleSlotClick = (slot: Slot) => {
     if (saving) return;
     if (slot.volunteer) {
-      // Clear the slot
       handleClear(slot);
     } else {
       setEditingSlot(slot.rowIndex);
@@ -118,7 +117,7 @@ export default function SignupGrid({ initialData }: SignupGridProps) {
               onClick={() => fetchRound(tab)}
               className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
                 tab === currentTab
-                  ? "bg-blue-600 text-white"
+                  ? "bg-marby-navy text-marby-gold"
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
               }`}
             >
@@ -130,7 +129,7 @@ export default function SignupGrid({ initialData }: SignupGridProps) {
 
       {/* Round header */}
       <div className="mb-6 text-center">
-        <h2 className="text-2xl font-bold text-gray-900">{round.round}</h2>
+        <h2 className="text-2xl font-bold text-marby-navy">{round.round}</h2>
         <p className="text-gray-600 mt-1">
           {round.date} &mdash; {round.location}
         </p>
@@ -154,7 +153,7 @@ export default function SignupGrid({ initialData }: SignupGridProps) {
           return (
             <div key={`${game.game}-${game.time}`} className="mb-6">
               <div className="flex items-center justify-between mb-2 px-1">
-                <h3 className="font-semibold text-gray-800">
+                <h3 className="font-semibold text-marby-navy">
                   {game.time} &mdash; {game.game}
                 </h3>
                 <span
@@ -168,14 +167,14 @@ export default function SignupGrid({ initialData }: SignupGridProps) {
                 </span>
               </div>
 
-              <div className="rounded-lg border border-gray-200 overflow-hidden">
+              <div className="rounded-lg border border-gray-200 overflow-hidden shadow-sm">
                 {game.slots.map((slot) => (
                   <div
                     key={slot.rowIndex}
                     className={`flex items-center justify-between px-4 py-3 border-b last:border-b-0 transition-colors ${
                       slot.volunteer
                         ? "bg-green-50"
-                        : "bg-white hover:bg-blue-50 cursor-pointer"
+                        : "bg-white hover:bg-indigo-50 cursor-pointer"
                     }`}
                     onClick={() =>
                       editingSlot !== slot.rowIndex && handleSlotClick(slot)
@@ -200,12 +199,12 @@ export default function SignupGrid({ initialData }: SignupGridProps) {
                           onChange={(e) => setNameInput(e.target.value)}
                           placeholder="Your name"
                           autoFocus
-                          className="border border-gray-300 rounded px-2 py-1 text-sm w-36 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="border border-gray-300 rounded px-2 py-1 text-sm w-36 focus:outline-none focus:ring-2 focus:ring-marby-navy"
                         />
                         <button
                           type="submit"
                           disabled={saving}
-                          className="bg-blue-600 text-white text-sm px-3 py-1 rounded hover:bg-blue-700 disabled:opacity-50"
+                          className="bg-marby-navy text-marby-gold text-sm px-3 py-1 rounded hover:bg-marby-navy-light disabled:opacity-50"
                         >
                           {saving ? "..." : "OK"}
                         </button>
