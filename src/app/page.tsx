@@ -50,8 +50,8 @@ export default async function Home() {
           <div className="text-center py-12 text-gray-500">
             <p className="text-lg mb-2">No rounds set up yet</p>
             <p className="text-sm">
-              Add a tab to the Google Sheet with columns: Round, Date, Location,
-              Game, Time, Role, Volunteer
+              Add a tab to the Google Sheet with columns: Game, Time, Role,
+              Volunteer
             </p>
           </div>
         )}

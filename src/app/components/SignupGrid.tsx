@@ -3,9 +3,6 @@
 import { useState, useCallback } from "react";
 
 interface Slot {
-  round: string;
-  date: string;
-  location: string;
   game: string;
   time: string;
   role: string;
@@ -20,9 +17,7 @@ interface GameData {
 }
 
 interface RoundData {
-  round: string;
-  date: string;
-  location: string;
+  name: string;
   games: GameData[];
 }
 
@@ -42,6 +37,7 @@ export default function SignupGrid({ initialData }: SignupGridProps) {
   const [editingSlot, setEditingSlot] = useState<number | null>(null);
   const [nameInput, setNameInput] = useState("");
   const [saving, setSaving] = useState(false);
+  const [confirmClear, setConfirmClear] = useState<Slot | null>(null);
 
   const fetchRound = useCallback(async (tab: string) => {
     setLoading(true);
@@ -58,25 +54,26 @@ export default function SignupGrid({ initialData }: SignupGridProps) {
   const handleSlotClick = (slot: Slot) => {
     if (saving) return;
     if (slot.volunteer) {
-      handleClear(slot);
+      setConfirmClear(slot);
     } else {
       setEditingSlot(slot.rowIndex);
       setNameInput("");
     }
   };
 
-  const handleClear = async (slot: Slot) => {
+  const handleClear = async () => {
+    if (!confirmClear) return;
     setSaving(true);
     try {
       await fetch("/api/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tab: currentTab, rowIndex: slot.rowIndex, name: "" }),
+        body: JSON.stringify({ tab: currentTab, rowIndex: confirmClear.rowIndex, name: "" }),
       });
       await fetchRound(currentTab);
     } finally {
       setSaving(false);
-      setEditingSlot(null);
+      setConfirmClear(null);
     }
   };
 
@@ -108,6 +105,36 @@ export default function SignupGrid({ initialData }: SignupGridProps) {
 
   return (
     <div className="w-full max-w-2xl mx-auto">
+      {/* Confirm clear dialog */}
+      {confirmClear && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl p-6 max-w-sm w-full shadow-xl">
+            <p className="text-lg font-semibold text-gray-900 mb-2">
+              Remove signup?
+            </p>
+            <p className="text-base text-gray-600 mb-6">
+              Remove <span className="font-semibold">{confirmClear.volunteer}</span> from{" "}
+              <span className="font-semibold">{confirmClear.role}</span>?
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setConfirmClear(null)}
+                className="flex-1 py-3 px-4 rounded-lg border border-gray-300 text-base font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleClear}
+                disabled={saving}
+                className="flex-1 py-3 px-4 rounded-lg bg-red-600 text-base font-medium text-white hover:bg-red-700 disabled:opacity-50"
+              >
+                {saving ? "Removing..." : "Remove"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Round selector */}
       {tabs.length > 1 && (
         <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
@@ -115,7 +142,7 @@ export default function SignupGrid({ initialData }: SignupGridProps) {
             <button
               key={tab}
               onClick={() => fetchRound(tab)}
-              className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+              className={`px-4 py-2 rounded-full text-base font-medium whitespace-nowrap transition-colors ${
                 tab === currentTab
                   ? "bg-marby-navy text-marby-gold"
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
@@ -129,18 +156,15 @@ export default function SignupGrid({ initialData }: SignupGridProps) {
 
       {/* Round header */}
       <div className="mb-6 text-center">
-        <h2 className="text-2xl font-bold text-marby-navy">{round.round}</h2>
-        <p className="text-gray-600 mt-1">
-          {round.date} &mdash; {round.location}
-        </p>
-        <p className="text-sm mt-2">
+        <h2 className="text-2xl font-bold text-marby-navy">{round.name}</h2>
+        <p className="text-base mt-2">
           <span className="font-semibold text-green-700">{filledCount}</span>
           <span className="text-gray-500">/{totalCount} filled</span>
         </p>
       </div>
 
       {loading && (
-        <div className="text-center py-8 text-gray-500">Loading...</div>
+        <div className="text-center py-8 text-gray-500 text-lg">Loading...</div>
       )}
 
       {/* Games */}
@@ -151,13 +175,13 @@ export default function SignupGrid({ initialData }: SignupGridProps) {
           const allFilled = gameFilledCount === gameTotalCount;
 
           return (
-            <div key={`${game.game}-${game.time}`} className="mb-6">
+            <div key={`${game.game}-${game.time}`} className="mb-8">
               <div className="flex items-center justify-between mb-2 px-1">
-                <h3 className="font-semibold text-marby-navy">
+                <h3 className="text-lg font-semibold text-marby-navy">
                   {game.time} &mdash; {game.game}
                 </h3>
                 <span
-                  className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                  className={`text-sm font-medium px-2.5 py-1 rounded-full ${
                     allFilled
                       ? "bg-green-100 text-green-700"
                       : "bg-amber-100 text-amber-700"
@@ -167,20 +191,20 @@ export default function SignupGrid({ initialData }: SignupGridProps) {
                 </span>
               </div>
 
-              <div className="rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+              <div className="rounded-xl border border-gray-200 overflow-hidden shadow-sm">
                 {game.slots.map((slot) => (
                   <div
                     key={slot.rowIndex}
-                    className={`flex items-center justify-between px-4 py-3 border-b last:border-b-0 transition-colors ${
+                    className={`flex items-center justify-between px-4 py-4 border-b last:border-b-0 transition-colors ${
                       slot.volunteer
                         ? "bg-green-50"
-                        : "bg-white hover:bg-indigo-50 cursor-pointer"
+                        : "bg-white hover:bg-indigo-50 cursor-pointer active:bg-indigo-100"
                     }`}
                     onClick={() =>
                       editingSlot !== slot.rowIndex && handleSlotClick(slot)
                     }
                   >
-                    <span className="text-sm font-medium text-gray-700 w-40">
+                    <span className="text-base font-medium text-gray-700 min-w-0 mr-3">
                       {slot.role}
                     </span>
 
@@ -190,7 +214,7 @@ export default function SignupGrid({ initialData }: SignupGridProps) {
                           e.preventDefault();
                           handleSubmit(slot.rowIndex);
                         }}
-                        className="flex gap-2 items-center"
+                        className="flex gap-2 items-center shrink-0"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <input
@@ -199,41 +223,29 @@ export default function SignupGrid({ initialData }: SignupGridProps) {
                           onChange={(e) => setNameInput(e.target.value)}
                           placeholder="Your name"
                           autoFocus
-                          className="border border-gray-300 rounded px-2 py-1 text-sm w-36 focus:outline-none focus:ring-2 focus:ring-marby-navy"
+                          className="border border-gray-300 rounded-lg px-3 py-2 text-base w-36 focus:outline-none focus:ring-2 focus:ring-marby-navy"
                         />
                         <button
                           type="submit"
                           disabled={saving}
-                          className="bg-marby-navy text-marby-gold text-sm px-3 py-1 rounded hover:bg-marby-navy-light disabled:opacity-50"
+                          className="bg-marby-navy text-marby-gold text-base px-4 py-2 rounded-lg hover:bg-marby-navy-light disabled:opacity-50"
                         >
                           {saving ? "..." : "OK"}
                         </button>
                         <button
                           type="button"
                           onClick={() => setEditingSlot(null)}
-                          className="text-gray-400 hover:text-gray-600 text-sm"
+                          className="text-gray-400 hover:text-gray-600 text-lg p-1"
                         >
                           ✕
                         </button>
                       </form>
                     ) : slot.volunteer ? (
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm text-green-700 font-medium">
-                          {slot.volunteer}
-                        </span>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleClear(slot);
-                          }}
-                          className="text-gray-300 hover:text-red-500 text-xs transition-colors"
-                          title="Remove signup"
-                        >
-                          ✕
-                        </button>
-                      </div>
+                      <span className="text-base text-green-700 font-medium shrink-0">
+                        {slot.volunteer}
+                      </span>
                     ) : (
-                      <span className="text-sm text-gray-400 italic">
+                      <span className="text-base text-gray-400 italic shrink-0">
                         Tap to sign up
                       </span>
                     )}
