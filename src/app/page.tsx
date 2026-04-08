@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { getRoundTabs, getLatestRoundTab, getRoundData } from "@/lib/sheets";
 import SignupGrid from "./components/SignupGrid";
+import NavMenu from "./components/NavMenu";
 
 export const dynamic = "force-dynamic";
 
@@ -40,6 +41,7 @@ export default async function Home() {
             </h1>
             <p className="text-sm text-blue-200">Match Day Volunteers</p>
           </div>
+          <NavMenu />
         </div>
       </header>
 

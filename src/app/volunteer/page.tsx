@@ -1,5 +1,6 @@
 import Image from "next/image";
 import VolunteerForm from "./VolunteerForm";
+import NavMenu from "../components/NavMenu";
 
 export const metadata = {
   title: "Marby Lions - Volunteer Signup",
@@ -24,6 +25,7 @@ export default function VolunteerPage() {
             </h1>
             <p className="text-sm text-blue-200">Volunteer Signup</p>
           </div>
+          <NavMenu />
         </div>
       </header>
 
