@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
 
 type VolunteerType = "match-day" | "bar" | null;
 
@@ -20,12 +19,12 @@ const OPTIONS = [
   },
 ];
 
-export default function VolunteerForm() {
-  const searchParams = useSearchParams();
-  const initialType = searchParams.get("type");
-  const [selected, setSelected] = useState<VolunteerType>(
-    initialType === "match-day" || initialType === "bar" ? initialType : null
-  );
+export default function VolunteerForm({
+  initialType,
+}: {
+  initialType?: "match-day" | "bar";
+}) {
+  const [selected, setSelected] = useState<VolunteerType>(initialType ?? null);
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
