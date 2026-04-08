@@ -19,8 +19,12 @@ const OPTIONS = [
   },
 ];
 
-export default function VolunteerForm() {
-  const [selected, setSelected] = useState<VolunteerType>(null);
+export default function VolunteerForm({
+  initialType,
+}: {
+  initialType?: "match-day" | "bar";
+}) {
+  const [selected, setSelected] = useState<VolunteerType>(initialType ?? null);
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");

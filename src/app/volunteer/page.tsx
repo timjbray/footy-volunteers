@@ -1,12 +1,20 @@
 import Image from "next/image";
 import VolunteerForm from "./VolunteerForm";
+import NavMenu from "../components/NavMenu";
 
 export const metadata = {
   title: "Marby Lions - Volunteer Signup",
   description: "Sign up to help at Marby Lions match days",
 };
 
-export default function VolunteerPage() {
+export default async function VolunteerPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const { type } = await searchParams;
+  const initialType = type === "match-day" || type === "bar" ? type : undefined;
+
   return (
     <div className="min-h-full bg-[var(--background)]">
       <header className="bg-marby-navy py-4 px-4">
@@ -24,11 +32,12 @@ export default function VolunteerPage() {
             </h1>
             <p className="text-sm text-blue-200">Volunteer Signup</p>
           </div>
+          <NavMenu />
         </div>
       </header>
 
       <main className="py-8 px-4">
-        <VolunteerForm />
+        <VolunteerForm initialType={initialType} />
       </main>
     </div>
   );
