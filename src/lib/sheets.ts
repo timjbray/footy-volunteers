@@ -151,3 +151,48 @@ export async function clearSlot(
     },
   });
 }
+
+/**
+ * Append a volunteer to a helper signup sheet tab.
+ * Creates the tab with headers if it doesn't exist.
+ * Columns: Name | Mobile | Email | Date
+ */
+export async function appendVolunteer(
+  sheetName: string,
+  data: { name: string; mobile: string; email: string }
+): Promise<void> {
+  const sheets = getSheets();
+
+  // Ensure the tab exists, create with headers if not
+  const tabs = await getSheetTabs();
+  if (!tabs.includes(sheetName)) {
+    await sheets.spreadsheets.batchUpdate({
+      spreadsheetId: SPREADSHEET_ID,
+      requestBody: {
+        requests: [{ addSheet: { properties: { title: sheetName } } }],
+      },
+    });
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: SPREADSHEET_ID,
+      range: `'${sheetName}'!A1:D1`,
+      valueInputOption: "RAW",
+      requestBody: { values: [["Name", "Mobile", "Email", "Date"]] },
+    });
+  }
+
+  const date = new Date().toLocaleDateString("en-AU", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+
+  await sheets.spreadsheets.values.append({
+    spreadsheetId: SPREADSHEET_ID,
+    range: `'${sheetName}'!A:D`,
+    valueInputOption: "RAW",
+    insertDataOption: "INSERT_ROWS",
+    requestBody: {
+      values: [[data.name, data.mobile, data.email, date]],
+    },
+  });
+}
