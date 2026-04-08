@@ -18,6 +18,9 @@ function getSheets() {
 
 const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID!;
 
+/** Tab names used for volunteer signup lists (not round data) */
+const VOLUNTEER_TABS = new Set(["Match Day Helpers", "Bar Volunteers"]);
+
 export interface Slot {
   game: string;
   time: string;
@@ -55,10 +58,18 @@ export async function getSheetTabs(): Promise<string[]> {
 }
 
 /**
- * Get the latest round tab name (last tab in the spreadsheet)
+ * Get only the round tabs (exclude volunteer signup tabs)
+ */
+export async function getRoundTabs(): Promise<string[]> {
+  const tabs = await getSheetTabs();
+  return tabs.filter((t) => !VOLUNTEER_TABS.has(t));
+}
+
+/**
+ * Get the latest round tab name (last round tab in the spreadsheet)
  */
 export async function getLatestRoundTab(): Promise<string | null> {
-  const tabs = await getSheetTabs();
+  const tabs = await getRoundTabs();
   return tabs.length > 0 ? tabs[tabs.length - 1] : null;
 }
 

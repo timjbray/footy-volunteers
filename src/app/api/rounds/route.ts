@@ -1,4 +1,4 @@
-import { getSheetTabs, getLatestRoundTab, getRoundData } from "@/lib/sheets";
+import { getRoundTabs, getLatestRoundTab, getRoundData } from "@/lib/sheets";
 import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
     // No tab specified — return latest round + list of all tabs
     const [tabs, latestTab] = await Promise.all([
-      getSheetTabs(),
+      getRoundTabs(),
       getLatestRoundTab(),
     ]);
 

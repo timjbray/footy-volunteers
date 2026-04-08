@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { getSheetTabs, getLatestRoundTab, getRoundData } from "@/lib/sheets";
+import { getRoundTabs, getLatestRoundTab, getRoundData } from "@/lib/sheets";
 import SignupGrid from "./components/SignupGrid";
 
 export const dynamic = "force-dynamic";
@@ -9,7 +9,7 @@ export default async function Home() {
 
   try {
     const [tabs, latestTab] = await Promise.all([
-      getSheetTabs(),
+      getRoundTabs(),
       getLatestRoundTab(),
     ]);
 
