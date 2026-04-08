@@ -7,14 +7,12 @@ type VolunteerType = "match-day" | "bar" | null;
 const OPTIONS = [
   {
     type: "match-day" as const,
-    label: "Option A",
     title: "Match Day Helper",
     description:
       "Happy to help on match days for any role — set up / pack up, timekeeper, match day official, ground manager, etc.",
   },
   {
     type: "bar" as const,
-    label: "Option B",
     title: "Bar Volunteer",
     description:
       "I have my RSA and am happy to work behind the bar on match days.",
@@ -116,10 +114,7 @@ export default function VolunteerForm() {
                 )}
               </div>
               <div>
-                <div className="text-sm font-semibold text-marby-navy uppercase tracking-wide">
-                  {opt.label}
-                </div>
-                <div className="text-lg font-bold text-gray-900 mt-0.5">
+                <div className="text-lg font-bold text-gray-900">
                   {opt.title}
                 </div>
                 <p className="text-base text-gray-600 mt-1">
